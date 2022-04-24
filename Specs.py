@@ -87,7 +87,11 @@ class VSubst_Exception(Exception):
 
 
 def spec_subst(s,v,e):
+
     def aesubst(ae,v,e):
+
+        ''' Substitution function for arithmetic expressions '''
+
         if isinstance(ae,AEVal):
             return ae
         elif isinstance(ae,AEVar):
@@ -111,6 +115,9 @@ def spec_subst(s,v,e):
             raise VSubst_Exception
 
     def besubst(be,v,e):
+
+        ''' Substitution function for Boolean expressions '''
+
         if isinstance(be,BEVal):
             return be
         elif isinstance(be,BENeg):
@@ -133,6 +140,10 @@ def spec_subst(s,v,e):
             return BELt(l,r)
         else:
             raise VSubst_Exception
+
+    ''' Main body: selects the type of expression
+        and proceeds with the right substitution
+        function. '''
 
     if isinstance(s,AExpr):
         return aesubst(s,v,e)

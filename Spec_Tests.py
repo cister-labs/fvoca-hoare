@@ -18,3 +18,10 @@ print(cmd)
 
 z = SForall('x',SImp(BEEq(AEVar('x'),AEVar('x')),BEAnd(BEVal(True),BEVal(False))))
 print(z)
+
+p = While(
+        BEEq(AEVar('x'),AEVal(0)),
+        SAtom(BEEq(AEVar('x'),AEVal(0))),
+        Assgn('x',AEMinus(AEVar('x'),AEVal(1)))
+    )
+print(p)

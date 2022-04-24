@@ -78,6 +78,6 @@ class While(Command):
         return self.__body
 
     def __str__(self):
-        b  = Fore.GREEN + "While" + "(" + str(self.__cond) + ") "
-        i  = " { " + Fore.CYAN + str(self.__ct) + " }"
-        return (b + ls + str(self.__body))
+        b  = Fore.GREEN + "While" + Style.RESET_ALL + "(" + str(self.__cond) + ") "
+        i  = Fore.CYAN + " { " + str(self.__inv) + " } " + Style.RESET_ALL
+        return (b + i + "{ " + str(self.__body) + " }")
