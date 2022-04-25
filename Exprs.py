@@ -107,6 +107,25 @@ class AEMult(AExpr):
     def __str__(self):
         return '('+str(self.__lnode)+'*'+str(self.__rnode)+')'
 
+class AEPow(AExpr):
+
+    ''' Build the power of an expression [e] up to an
+        integer [n].'''
+
+    def __init__(self,e,i):
+        if not (isinstance(e,AExpr) or isinstance(i,AExpr)):
+            raise AExpr_Exception    
+        self.__base = e
+        self.__exp  = i
+    
+    def base(self):
+        return self.__base
+
+    def exp(self):
+        return self.__exp
+
+    def __str__(self):
+        return str(self.__base)+' ^ '+str(self.__exp)
 
 ''' The following classes represent the various 
     constructs of Boolean expressions. '''
@@ -175,7 +194,7 @@ class BEOr(BExpr):
         return self.__rnode
 
     def __str__(self):
-        return "("+str(self.__lnode)+" \\/ "+str(self.__rnode)+")"
+        return "("+str(self.__lnode)+u' ⋁ '+str(self.__rnode)+")"
 
 
 class BEEq(BExpr):
@@ -219,49 +238,64 @@ class BELt(BExpr):
     def __str__(self):
         return "("+str(self.__lnode)+" < "+str(self.__rnode)+")"
 
+class BEGt(BExpr):
 
-''' Using the above class definitions, one can
-    define functions that construct other 
-    operations. 
-    
-    Note: Optionally, you can define new
-    classes representing these operations and 
-    make them primitive in the language. '''
+    ''' Class that represents the less-than
+        relation between two arithmetic expressions.'''
 
-def AENeg(e):
-    ''' Change the sign of an arithmetic expression'''
-    return AEMinus(AEVal(0),e)
+    def __init__(self,l,r):
+        if not (isinstance(l,AExpr) or isinstance(r,AExpr)):
+            raise BExpr_Exception
+        self.__lnode   = l
+        self.__rnode   = r
 
-def AEPow(e,n):
-    ''' Build the power of an expression [e] up to an
-        integer [n].'''
-    if n == 0:
-        return AEVal(1)
-    else:
-        return AEMult(e,AEPow(e,n-1))
+    def inner_l(self):
+        return self.__lnode
 
-def BEImp(b1,b2):
-    ''' Build an implication between two Boolean
-        expressions, that is, [b1 -> b2] is defined
-        as [!b1 \\/ b2].'''
-    return BEOr(BENeg(b1),b2)
+    def inner_r(self):
+        return self.__rnode
 
-def BENeq(e1,e2):
-    ''' Build the not-equal relation between two
-        arithmetic expressions. '''
-    return BENeg(BEEq(e1,e2))
+    def __str__(self):
+        return "("+str(self.__lnode)+" > "+str(self.__rnode)+")"
 
-def BELe(e1,e2):
-    ''' Build the less-or-equal-than relateion
-        between two arithmetic expressions. '''
-    return BEOr(BEEq(e1,e2),BELt(e1,e2))
+class BELeq(BExpr):
 
-def BEGe(e1,e2):
-    ''' Build the less-or-equal-than relateion
-        between two arithmetic expressions. '''
-    return BENeg(BELt(e1,e2))
+    ''' Class that represents the less-than
+        relation between two arithmetic expressions.'''
 
-def BEGe(e1,e2):
-    ''' Build the less-than relateion
-        between two arithmetic expressions. '''
-    return BEAnd(BEGe(e1,e2),BENeq(e1,e2))
+    def __init__(self,l,r):
+        if not (isinstance(l,AExpr) or isinstance(r,AExpr)):
+            raise BExpr_Exception
+        self.__lnode   = l
+        self.__rnode   = r
+
+    def inner_l(self):
+        return self.__lnode
+
+    def inner_r(self):
+        return self.__rnode
+
+    def __str__(self):
+        return "("+str(self.__lnode)+u' ⩽ '+str(self.__rnode)+")"
+
+class BEGeq(BExpr):
+
+    ''' Class that represents the less-than
+        relation between two arithmetic expressions.'''
+
+    def __init__(self,l,r):
+        if not (isinstance(l,AExpr) or isinstance(r,AExpr)):
+            raise BExpr_Exception
+        self.__lnode   = l
+        self.__rnode   = r
+
+    def inner_l(self):
+        return self.__lnode
+
+    def inner_r(self):
+        return self.__rnode
+
+    def __str__(self):
+        return "("+str(self.__lnode)+u' ⩾ '+str(self.__rnode)+")"
+
+

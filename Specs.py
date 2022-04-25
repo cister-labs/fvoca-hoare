@@ -9,19 +9,37 @@ class Spec:
 class Spec_Exception(Exception):
     pass
 
-class SAtom(Spec):
+class SVal(Spec):
 
     ''' An atom is a Boolean expression. This is the
         base case for our specification language '''
 
-    def __init__(self,be):
-        self.__atom = be
+    def __init__(self,b):
+        if not (type(b) == bool):
+            raise Spec_Exception
+        self.__value = b
 
-    def bexpr(self):
-        return self.__atom
+    def value(self):
+        return self.__value
 
     def __str__(self):
-        return str(self.__atom)
+        return Fore.MAGENTA + str(self.__value) + Style.RESET_ALL
+
+class SNeg(Spec):
+
+    ''' An atom is a Boolean expression. This is the
+        base case for our specification language '''
+
+    def __init__(self,b):
+        if not (isinstance(b,Spec)):
+            raise Spec_Exception
+        self.__value = b
+
+    def value(self):
+        return self.__value
+
+    def __str__(self):
+        return Fore.MAGENTA + u'~' + Style.RESET_ALL + "(" + str(self.__value) +")" 
 
 class SImp(Spec):
 
@@ -39,7 +57,148 @@ class SImp(Spec):
         return self.__rspec
 
     def __str__(self):
-        return "(" + str(self.__lspec) + Fore.MAGENTA + " ==> " + Style.RESET_ALL + str(self.__rspec) + ")"
+        return "(" + str(self.__lspec) + Fore.MAGENTA + u' -> ' + Style.RESET_ALL + str(self.__rspec) + ")"
+
+class SAnd(Spec):
+
+    ''' Build and implication between two
+        specifications. '''
+
+    def __init__(self,sl,sr):
+        self.__lspec = sl
+        self.__rspec = sr
+
+    def left(self):
+        return self.__lspec
+
+    def right(self):
+        return self.__rspec
+
+    def __str__(self):
+        return "(" + str(self.__lspec) + Fore.MAGENTA + u' ⋀ ' + Style.RESET_ALL + str(self.__rspec) + ")"
+
+class SOr(Spec):
+
+    ''' Build and implication between two
+        specifications. '''
+
+    def __init__(self,sl,sr):
+        self.__lspec = sl
+        self.__rspec = sr
+
+    def left(self):
+        return self.__lspec
+
+    def right(self):
+        return self.__rspec
+
+    def __str__(self):
+        return "(" + str(self.__lspec) + Fore.MAGENTA + u' ⋁ ' + Style.RESET_ALL + str(self.__rspec) + ")"
+
+class SEq(Spec):
+
+    ''' Build and implication between two
+        specifications. '''
+
+    def __init__(self,sl,sr):
+        if isinstance(sl,AExpr) and isinstance(sr,AExpr):
+            self.__lspec = sl
+            self.__rspec = sr
+        else:
+            raise Spec_Exception
+
+    def left(self):
+        return self.__lspec
+
+    def right(self):
+        return self.__rspec
+
+    def __str__(self):
+        return "(" + str(self.__lspec) + Fore.MAGENTA + " == " + Style.RESET_ALL + str(self.__rspec) + ")"
+
+class SLt(Spec):
+
+    ''' Build an less-than relation between two
+        specifications. '''
+
+    def __init__(self,sl,sr):
+        if isinstance(sl,AExpr) and isinstance(sr,AExpr):
+            self.__lspec = sl
+            self.__rspec = sr
+        else:
+            raise Spec_Exception
+
+    def left(self):
+        return self.__lspec
+
+    def right(self):
+        return self.__rspec
+
+    def __str__(self):
+        return "(" + str(self.__lspec) + Fore.MAGENTA + " < " + Style.RESET_ALL + str(self.__rspec) + ")"
+
+class SGt(Spec):
+
+    ''' Build an less-than relation between two
+        specifications. '''
+
+    def __init__(self,sl,sr):
+        if isinstance(sl,AExpr) and isinstance(sr,AExpr):
+            self.__lspec = sl
+            self.__rspec = sr
+        else:
+            raise Spec_Exception
+
+    def left(self):
+        return self.__lspec
+
+    def right(self):
+        return self.__rspec
+
+    def __str__(self):
+        return "(" + str(self.__lspec) + Fore.MAGENTA + " > " + Style.RESET_ALL + str(self.__rspec) + ")"
+
+class SLeq(Spec):
+
+    ''' Build an less-than relation between two
+        specifications. '''
+
+    def __init__(self,sl,sr):
+        if isinstance(sl,AExpr) and isinstance(sr,AExpr):
+            self.__lspec = sl
+            self.__rspec = sr
+        else:
+            raise Spec_Exception
+
+    def left(self):
+        return self.__lspec
+
+    def right(self):
+        return self.__rspec
+
+    def __str__(self):
+        return "(" + str(self.__lspec) + Fore.MAGENTA + u' ⩽ ' + Style.RESET_ALL + str(self.__rspec) + ")"
+
+class SGeq(Spec):
+
+    ''' Build an less-than relation between two
+        specifications. '''
+
+    def __init__(self,sl,sr):
+        if isinstance(sl,AExpr) and isinstance(sr,AExpr):
+            self.__lspec = sl
+            self.__rspec = sr
+        else:
+            raise Spec_Exception
+
+    def left(self):
+        return self.__lspec
+
+    def right(self):
+        return self.__rspec
+
+    def __str__(self):
+        return "(" + str(self.__lspec) + Fore.MAGENTA + u' ⩾ ' + Style.RESET_ALL + str(self.__rspec) + ")"
 
 class SForall(Spec):
 
@@ -57,7 +216,6 @@ class SForall(Spec):
 
     def __str__(self):
         return (u'∀' + (str(self.__var) + ", " + str(self.__spec)))
-
 
 class SEx(Spec):
 
@@ -111,6 +269,10 @@ def spec_subst(s,v,e):
             l = aesubst(ae.inner_l(),v,e)
             r = aesubst(ae.inner_r(),v,e)
             return AEMult(l,r)
+        elif isinstance(ae,AEPow):
+            l = aesubst(ae.base(),v,e)
+            r = aesubst(ae.exp(),v,e)
+            return AEPow(l,r)
         else:
             raise VSubst_Exception
 
@@ -118,26 +280,38 @@ def spec_subst(s,v,e):
 
         ''' Substitution function for Boolean expressions '''
 
-        if isinstance(be,BEVal):
+        if isinstance(be,SVal):
             return be
-        elif isinstance(be,BENeg):
-            return BENeg(besubst(be.inner(),v,e))
-        elif isinstance(be,BEAnd):
-            l = besubst(be.inner_l(),v,e)
-            r = besubst(be.inner_r(),v,e)
-            return BEAnd(l,r)
-        elif isinstance(be,BEOr):
-            l = besubst(be.inner_l(),v,e)
-            r = besubst(be.inner_r(),v,e)
-            return BEOr(l,r)
-        elif isinstance(be,BEEq):
-            l = aesubst(be.inner_l(),v,e)
-            r = aesubst(be.inner_r(),v,e)
-            return BEEq(l,r)
-        elif isinstance(be,BELt):
-            l = aesubst(be.inner_l(),v,e)
-            r = aesubst(be.inner_r(),v,e)
-            return BELt(l,r)
+        elif isinstance(be,SNeg):
+            return SNeg(besubst(be.value(),v,e))
+        elif isinstance(be,SAnd):
+            l = besubst(be.left(),v,e)
+            r = besubst(be.right(),v,e)
+            return SAnd(l,r)
+        elif isinstance(be,SOr):
+            l = besubst(be.left(),v,e)
+            r = besubst(be.right(),v,e)
+            return SOr(l,r)
+        elif isinstance(be,SEq):
+            l = aesubst(be.left(),v,e)
+            r = aesubst(be.right(),v,e)
+            return SEq(l,r)
+        elif isinstance(be,SLt):
+            l = aesubst(be.left(),v,e)
+            r = aesubst(be.right(),v,e)
+            return SLt(l,r)
+        elif isinstance(be,SGt):
+            l = aesubst(be.left(),v,e)
+            r = aesubst(be.right(),v,e)
+            return SGt(l,r)
+        elif isinstance(be,SLeq):
+            l = aesubst(be.left(),v,e)
+            r = aesubst(be.right(),v,e)
+            return SLeq(l,r)
+        elif isinstance(be,SGeq):
+            l = aesubst(be.left(),v,e)
+            r = aesubst(be.right(),v,e)
+            return SGeq(l,r)
         else:
             raise VSubst_Exception
 
@@ -149,3 +323,27 @@ def spec_subst(s,v,e):
         return aesubst(s,v,e)
     else:
         return besubst(s,v,e)
+
+def bexpr2spec(e):
+
+    ''' Function that converts a Boolean expression
+        into its specification counterpart.'''
+
+    if isinstance(e,BEVal):
+        return SVal(e.value())
+    elif isinstance(e,BENeg):
+        return SNeg(bexpr2spec(e.inner()))
+    elif isinstance(e,BEAnd):
+        l = bexpr2spec(e.inner_l())
+        r = bexpr2spec(e.inner_r())
+        return SAnd(l,r)
+    elif isinstance(e,BEOr):
+        l = bexpr2spec(e.inner_l())
+        r = bexpr2spec(e.inner_r())
+        return SOr(l,r)
+    elif isinstance(e,BEEq):
+        return SEq(e.inner_l(),e.inner_r())
+    elif isinstance(e,BELt):
+        return SLt(e.inner_l(),e.inner_r())
+    else:
+        raise Spec_Exception
