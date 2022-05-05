@@ -29,6 +29,14 @@ class AEVar(AExpr):
     def name(self):
         return self.__name
 
+    def __eq__(self,other):
+        match other:
+            case AEVar():
+                return (self.__name == other.name())
+            case _:
+                return False
+
+
     def __str__(self):
         return str(self.__name)
 
@@ -44,6 +52,13 @@ class AEVal(AExpr):
     def value(self):
         return self.__value
 
+    def __eq__(self,other):
+        match other:
+            case AEVal():
+                return (self.__value == other.value())
+            case _:
+                return False
+
     def __str__(self):
         return str(self.__value)
 
@@ -58,11 +73,16 @@ class AEPlus(AExpr):
         self.__rnode   = r
         self.__lnode   = l
 
-    def inner_l(self):
+    def left(self):
         return self.__lnode
 
-    def inner_r(self):
+    def right(self):
         return self.__rnode
+
+    def __eq__(self,other):
+        match other:
+            case AEPlus():
+                return (self.__lnode == other.left() and self.__rnode == other.right())
 
     def __str__(self):
         return '('+str(self.__lnode)+'+'+str(self.__rnode)+')'
@@ -78,11 +98,17 @@ class AEMinus(AExpr):
         self.__rnode   = r
         self.__lnode   = l
 
-    def inner_l(self):
+    def left(self):
         return self.__lnode
 
-    def inner_r(self):
+    def right(self):
         return self.__rnode
+
+    def __eq__(self,other):
+        match other:
+            case AEMinus():
+                return (self.__lnode == other.left() and self.__rnode == other.right())
+
 
     def __str__(self):
         return '('+str(self.__lnode)+'-'+str(self.__rnode)+')'
@@ -98,11 +124,17 @@ class AEMult(AExpr):
         self.__rnode   = r
         self.__lnode   = l
 
-    def inner_l(self):
+    def left(self):
         return self.__lnode
 
-    def inner_r(self):
+    def right(self):
         return self.__rnode
+
+    def __eq__(self,other):
+        match other:
+            case AEMult():
+                return (self.__lnode == other.left() and self.__rnode == other.right())
+
 
     def __str__(self):
         return '('+str(self.__lnode)+'*'+str(self.__rnode)+')'
@@ -124,8 +156,14 @@ class AEPow(AExpr):
     def exp(self):
         return self.__exp
 
+    def __eq__(self,other):
+        match other:
+            case AEPow():
+                return (self.__base == other.base() and self.__exp == other.exp())
+
     def __str__(self):
         return str(self.__base)+' ^ '+str(self.__exp)
+
 
 ''' The following classes represent the various 
     constructs of Boolean expressions. '''
@@ -140,6 +178,13 @@ class BEVal(BExpr):
     def value(self):
         return self.__val
 
+    def __eq__(self,other):
+        match other:
+            case BEVal():
+                return self.__val == other.value()
+            case _:
+                return False
+
     def __str__(self):
         return str(self.__val)
 
@@ -152,6 +197,13 @@ class BENeg(BExpr):
 
     def inner(self):
         return self.__inner
+
+    def __eq__(self,other):
+        match other:
+            case BENeg():
+                return self.__inner == other.inner()
+            case _:
+                return False
 
     def __str__(self):
         return "~("+str(self.__inner)+")"
@@ -167,11 +219,18 @@ class BEAnd(BExpr):
         self.__lnode   = l
         self.__rnode   = r
 
-    def inner_l(self):
+    def left(self):
         return self.__lnode
 
-    def inner_r(self):
+    def right(self):
         return self.__rnode
+
+    def __eq__(self,other):
+        match other:
+            case BEAnd():
+                return self.__lnode == other.left() and self.__rnode == other.right()
+            case _:
+                return False
 
     def __str__(self):
         return "("+str(self.__lnode)+(u' ⋀ ')+str(self.__rnode)+")"
@@ -187,15 +246,21 @@ class BEOr(BExpr):
         self.__lnode   = l
         self.__rnode   = r
 
-    def inner_l(self):
+    def left(self):
         return self.__lnode
 
-    def inner_r(self):
+    def right(self):
         return self.__rnode
+
+    def __eq__(self,other):
+        match other:
+            case BEOr():
+                return self.__lnode == other.left() and self.__rnode == other.right()
+            case _:
+                return False
 
     def __str__(self):
         return "("+str(self.__lnode)+u' ⋁ '+str(self.__rnode)+")"
-
 
 class BEEq(BExpr):
 
@@ -208,19 +273,25 @@ class BEEq(BExpr):
         self.__lnode   = l
         self.__rnode   = r
 
-    def inner_l(self):
+    def left(self):
         return self.__lnode
 
-    def inner_r(self):
+    def right(self):
         return self.__rnode
+
+    def __eq__(self,other):
+        match other:
+            case BEEq():
+                return self.__lnode == other.left() and self.__rnode == other.right()
+            case _:
+                return False
 
     def __str__(self):
         return "("+str(self.__lnode)+" == "+str(self.__rnode)+")"
 
-
 class BELt(BExpr):
 
-    ''' Class that represents the less-than
+    ''' Class that represents the less than
         relation between two arithmetic expressions.'''
 
     def __init__(self,l,r):
@@ -229,18 +300,25 @@ class BELt(BExpr):
         self.__lnode   = l
         self.__rnode   = r
 
-    def inner_l(self):
+    def left(self):
         return self.__lnode
 
-    def inner_r(self):
+    def right(self):
         return self.__rnode
+
+    def __eq__(self,other):
+        match other:
+            case BELt():
+                return self.__lnode == other.left() and self.__rnode == other.right()
+            case _:
+                return False
 
     def __str__(self):
         return "("+str(self.__lnode)+" < "+str(self.__rnode)+")"
 
 class BEGt(BExpr):
 
-    ''' Class that represents the less-than
+    ''' Class that represents the greater than
         relation between two arithmetic expressions.'''
 
     def __init__(self,l,r):
@@ -249,18 +327,25 @@ class BEGt(BExpr):
         self.__lnode   = l
         self.__rnode   = r
 
-    def inner_l(self):
+    def left(self):
         return self.__lnode
 
-    def inner_r(self):
+    def right(self):
         return self.__rnode
+
+    def __eq__(self,other):
+        match other:
+            case BEGt():
+                return self.__lnode == other.left() and self.__rnode == other.right()
+            case _:
+                return False
 
     def __str__(self):
         return "("+str(self.__lnode)+" > "+str(self.__rnode)+")"
 
 class BELeq(BExpr):
 
-    ''' Class that represents the less-than
+    ''' Class that represents the less or equal than
         relation between two arithmetic expressions.'''
 
     def __init__(self,l,r):
@@ -269,18 +354,25 @@ class BELeq(BExpr):
         self.__lnode   = l
         self.__rnode   = r
 
-    def inner_l(self):
+    def left(self):
         return self.__lnode
 
-    def inner_r(self):
+    def right(self):
         return self.__rnode
+
+    def __eq__(self,other):
+        match other:
+            case BELeq():
+                return self.__lnode == other.left() and self.__rnode == other.right()
+            case _:
+                return False
 
     def __str__(self):
         return "("+str(self.__lnode)+u' ⩽ '+str(self.__rnode)+")"
 
 class BEGeq(BExpr):
 
-    ''' Class that represents the less-than
+    ''' Class that represents the greater or equal than
         relation between two arithmetic expressions.'''
 
     def __init__(self,l,r):
@@ -289,11 +381,18 @@ class BEGeq(BExpr):
         self.__lnode   = l
         self.__rnode   = r
 
-    def inner_l(self):
+    def left(self):
         return self.__lnode
 
-    def inner_r(self):
+    def right(self):
         return self.__rnode
+
+    def __eq__(self,other):
+        match other:
+            case BEGeq():
+                return self.__lnode == other.left() and self.__rnode == other.right()
+            case _:
+                return False
 
     def __str__(self):
         return "("+str(self.__lnode)+u' ⩾ '+str(self.__rnode)+")"

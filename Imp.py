@@ -7,7 +7,13 @@ class Command:
     pass
 
 class Skip(Command):
-    pass
+
+    def __eq__(self,other):
+        match other:
+            case Skip():
+                return True
+            case _:
+                return False
 
 class Assgn(Command):
 
@@ -20,6 +26,16 @@ class Assgn(Command):
 
     def value(self):
         return self.__expr
+
+    def __eq__(self,other):
+        match other:
+            case Assgn():
+                if self.__vname == other.name() and self.__expr == other.value():
+                    return True
+                else:
+                    return False
+            case _:
+                return False
 
     def __str__(self):
         return str(self.__vname) + " "+ Fore.GREEN + ":= " + Style.RESET_ALL + str(self.__expr) + " ;"
@@ -35,6 +51,14 @@ class Seq(Command):
 
     def right(self):
         return self.__cr
+
+    def __eq__(self,other):
+        match other:
+            case Seq():
+                return ((self.__cl == other.left()) and 
+                        (self.__cr == other.right()))
+            case _:
+                return False
 
     def __str__(self):
         return (str(self.__cl) + str(self.__cr))
@@ -54,6 +78,15 @@ class IfThen(Command):
 
     def right(self):
         return self.__cf
+    
+    def __eq__(self,other):
+        match other:
+            case IfThen():
+                return ((self.__cond == other.cond()) and
+                        (self.__ct == other.left()) and 
+                        (self.__cf == other.right()))
+            case _:
+                return False
 
     def __str__(self):
         b  = Fore.GREEN + "If" + "(" + str(self.__cond) + ") "
@@ -76,6 +109,16 @@ class While(Command):
 
     def body(self):
         return self.__body
+
+    def __eq__(self,other):
+        match other:
+            case Seq():
+                return ((self.__cond == other.cond()) and 
+                        (self.__inv == other.inv()) and
+                        (self.__body == other.body())
+                        )
+            case _:
+                return False
 
     def __str__(self):
         b  = Fore.GREEN + "While" + Style.RESET_ALL + "(" + str(self.__cond) + ") "
