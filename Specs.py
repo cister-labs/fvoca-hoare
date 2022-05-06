@@ -307,7 +307,6 @@ class SGeq(Spec):
     def __hash__(self):
         return 10
 
-
     def __str__(self):
         return "(" + str(self.__lspec) + Fore.MAGENTA + u' ⩾ ' + Style.RESET_ALL + str(self.__rspec) + ")"
 

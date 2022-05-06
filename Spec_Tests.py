@@ -73,9 +73,11 @@ p11_comm = While(BELt(AEVar('i'),AEVar('n')),
 p11_post = SEq(AEVar('s'),AEPow(AEVal(2),AEVar('i')))
 
 for i in range(1,12):
-   k = VCG(globals()['p'+str(i)+'_pre'],globals()['p'+str(i)+'_comm'],globals()['p'+str(i)+'_post'])
-   for t in k: 
-    print(f'{i} : {t}')
+    pre  = globals()['p'+str(i)+'_pre']
+    c    = globals()['p'+str(i)+'_comm']
+    post = globals()['p'+str(i)+'_post']
+    r = prove_correct(pre,c,post)
+    print(f'Ex {i}) Checking Results ==> {r}!')
 
 #k = wprec(p1_comm,p1_post)
 #print(k)

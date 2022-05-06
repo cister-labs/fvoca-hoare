@@ -1,5 +1,6 @@
-from z3 import *
+from z3    import *
 from Specs import *
+from VCs   import *
 
 ''' The function [spec_vars_ae] identifies all free
     variables in an arithmetic expression and gathers
@@ -129,5 +130,36 @@ def prove_vcs(vcs,vars):
         # We negate each of the formulae so that if Z3 says unsat
         # then we know it is a theorem.
         s.add(Not(spec2z3(vc,vars)))
-    print(s)
     return s.check()
+
+def prove_correct_VC(pre,c,post):
+    # Generate the proof obligations
+    vcs = VC(pre,c,post)
+    # Collect the variables in the specifications
+    # in order to generate references to variables 
+    # in Z3
+    s = set()
+    for x in vcs:
+        s = s.union(spec_vars(x))
+
+    vars = dict()
+    for i in s:
+        vars[i] = Int(i)
+
+    return prove_vcs(vcs,vars)
+
+def prove_correct_VCG(pre,c,post):
+    # Generate the proof obligations
+    vcs = VCG(pre,c,post)
+    # Collect the variables in the specifications
+    # in order to generate references to variables 
+    # in Z3
+    s = set()
+    for x in vcs:
+        s = s.union(spec_vars(x))
+
+    vars = dict()
+    for i in s:
+        vars[i] = Int(i)
+
+    return prove_vcs(vcs,vars)
