@@ -45,9 +45,9 @@ class TestWPrec(unittest.TestCase):
 
     # 6.
     def test_wprec_6(self):
-        p6_comm = Assgn('i',AEPlus(AEVar('i'),AEVal(2)))
-        p6_post = SEq(AEVar('i'),AEPlus(AEVar('a'),AEVal(2)))
-        p6_answ = SEq(AEPlus(AEVar('i'),AEVal(2)),AEPlus(AEVar('a'),AEVal(2)))
+        p6_comm = Assgn('a',AEPlus(AEVar('i'),AEVal(2)))
+        p6_post = SEq(AEVar('a'),AEPlus(AEVar('i'),AEVal(2)))
+        p6_answ = SEq(AEPlus(AEVar('i'),AEVal(2)),AEPlus(AEVar('i'),AEVal(2)))
         self.assertEqual(wprec(p6_comm,p6_post),p6_answ)
 
     # 7.

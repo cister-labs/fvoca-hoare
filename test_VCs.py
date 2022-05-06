@@ -74,11 +74,11 @@ class Test_VCs(unittest.TestCase):
     # 6.
     def test_vcs_6(self):
         p6_pre  = SVal(True)
-        p6_comm = Assgn('i',AEPlus(AEVar('i'),AEVal(2)))
-        p6_post = SEq(AEVar('i'),AEPlus(AEVar('a'),AEVal(2)))
+        p6_comm = Assgn('a',AEPlus(AEVar('i'),AEVal(2)))
+        p6_post = SEq(AEVar('a'),AEPlus(AEVar('i'),AEVal(2)))
         p6_vc1  = { SImp(
                         SVal(True),
-                        SEq(AEPlus(AEVar('i'),AEVal(2)),AEPlus(AEVar('a'),AEVal(2)))
+                        SEq(AEPlus(AEVar('i'),AEVal(2)),AEPlus(AEVar('i'),AEVal(2)))
                     )
         }
         self.assertEqual(VC(p6_pre,p6_comm,p6_post),p6_vc1) 

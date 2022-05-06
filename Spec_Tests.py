@@ -41,8 +41,10 @@ p5_post = SEq(AEVar('i'),AEPlus(AEVar('a'),AEVal(1)))
 
 # 6.
 p6_pre  = SVal(True)
-p6_comm = Assgn('i',AEPlus(AEVar('i'),AEVal(2)))
-p6_post = SEq(AEVar('i'),AEPlus(AEVar('a'),AEVal(2)))
+p6_comm = Assgn('a',AEPlus(AEVar('i'),AEVal(2)))
+p6_post = SEq(AEVar('a'),AEPlus(AEVar('i'),AEVal(2)))
+
+print(wprec(p6_comm,p6_post))
 
 # 7.
 p7_pre  = SGt(AEVar('a'),AEVar('b'))
@@ -72,12 +74,12 @@ p11_comm = While(BELt(AEVar('i'),AEVar('n')),
                 Assgn('s',AEMult(AEVar('s'),AEVal(2)))))
 p11_post = SEq(AEVar('s'),AEPow(AEVal(2),AEVar('i')))
 
-for i in range(1,12):
-    pre  = globals()['p'+str(i)+'_pre']
-    c    = globals()['p'+str(i)+'_comm']
-    post = globals()['p'+str(i)+'_post']
-    r = prove_correct(pre,c,post)
-    print(f'Ex {i}) Checking Results ==> {r}!')
+# for i in range(1,12):
+#     pre  = globals()['p'+str(i)+'_pre']
+#     c    = globals()['p'+str(i)+'_comm']
+#     post = globals()['p'+str(i)+'_post']
+#     r = prove_correct(pre,c,post)
+#     print(f'Ex {i}) Checking Results ==> {r}!')
 
 #k = wprec(p1_comm,p1_post)
 #print(k)
